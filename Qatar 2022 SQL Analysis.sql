@@ -2,10 +2,12 @@ use FWC_Qatar_2022
 go
 
 /* How many goals were scored in the tournament? */
+
 select count(G.Goal_ID) as Total_Goals_Scored
 from Goals G
 
 /* How many of them were scored in the group and knockout stage? */
+
 select G.Round, count(G.Goal_ID) as Goals_Per_Round
 from Goals G
 where G.Round in ('Group Stage', 'Round of 16', 'Quarter Final', 
@@ -14,6 +16,7 @@ group by g.Round
 order by Goals_Per_Round
 
 /* What were the amount of games won by each group winner? */
+
 select G.Team_Name, G.Position, T.Wins
 from Groups G
 JOIN Teams T on G.Team_ID = T.Team_ID
@@ -21,12 +24,9 @@ where G.Position = '1'
 group by G.Team_Name, T.Wins, G.Position
 order by T.Wins desc
 
-/* What were the average attendances recorded in each stadium? */
-
-
-
 /* Show the goals scored and conceded for the teams that 
 were eliminated in the group stage.*/
+
 select T.Team_Name, T.Goals_Scored, T.Goals_Conceded, T.Highest_Finish
 from Teams T
 where T.Highest_Finish = 'Group Stage'
@@ -34,6 +34,7 @@ group by T.Team_Name, T.Goals_Scored, T.Goals_Conceded, T.Highest_Finish
 order by T.Team_Name
 
 /* How many goals were scored in additional time? */
+
 select G.Time_Format, count(G.Goal_ID) as Number_of_Goals
 from Goals G
 where G.Time_Format = 'Additional Time'
@@ -41,12 +42,14 @@ group by G.Time_Format
 
 
 /* Which team had the highest amount of bookings (Red + Yellow Cards) */
+
 select T.Team_Name, MAX(T.Yellow_Cards + T.Red_Cards) as Number_of_Bookings
 from Teams T
 group by T.Team_Name
 order by Number_of_Bookings desc
 
 /* How many goals had Argentina and France scored before the final? */
+
 select T.Team_Name, G.Round, count(G.Goal_ID) as Number_of_Goals
 from Teams T
 JOIN Goals G on T.Team_ID = G.Team_ID
@@ -56,6 +59,7 @@ group by T.Team_Name, G.Round
 
 
 /* Which team(s) collected no single point in the group stages? */
+
 select T.Team_Name, G.Points_Gained	
 from Groups G 
 JOIN Teams T on G.Group_ID = T.Group_ID
@@ -65,6 +69,7 @@ group by T.Team_Name, G.Points_Gained
 
 /* What teams participated in the game(s) that had the 
 highest stadium attendances? */
+
 select S.Stadium_Name, M.Home_Team, M.Away_Team, 
 						MAX(S.Attendance) as Highest_Attendance
 from Stadiums S
@@ -73,12 +78,14 @@ group by M.Home_Team, M.Away_Team, S.Stadium_Name
 order by Highest_Attendance desc
 
 /* Which player scored the highest number of goals? */
+
 select top 1 G.Goal_Scorer, count(G.Goal_ID) as Number_of_Goals
 from Goals G
 group by G.Goal_Scorer
 order by Number_of_Goals desc
 
 /* What was the latest minute in which the top scorer scored a goal? */
+
 select G.Goal_Scorer, G.Goal_Minute 
 from Goals G
 where G.Goal_Scorer = 'Kylian Mbappe'
@@ -86,6 +93,7 @@ group by G.Goal_Scorer, G.Goal_Minute
 order by Goal_Minute 
 
 /* On which date was the last game at Al Janoub Stadium played? */
+
 select top 1 M.Date, M.Stadium_Name
 from Matches M
 where M.Stadium_Name = 'Al Janoub Stadium'
@@ -93,6 +101,7 @@ group by M.Stadium_Name, M.Date
 order by M.Date desc
 
 /* What was the highest possible round that all 8 group winners could reach? */
+
 select G.Team_Name, G.Position, T.Highest_Finish
 from Groups G
 JOIN Teams T on G.Group_ID = T.Group_ID
@@ -101,18 +110,21 @@ group by G.Team_Name, T.Highest_Finish, G.Position
 order by G.Team_Name
 
 /* What were the teams that Lionel Messi and Cristiano Ronaldo scored against. */
+
 select G.Goal_Scorer, G.Scored_Against
 from Goals G
 where G.Goal_Scorer = 'Lionel Messi' OR G.Goal_Scorer = 'Cristiano Ronaldo'
 group by G.Goal_Scorer, G.Scored_Against
 
 /* How many goals were scored in Extra time (additional 30 mins in knockout)? */
+
 select G.Time_Format, count(G.Goal_ID) as Number_of_Goals
 from Goals G
 where G.Time_Format LIKE '%Extra Time%'
 group by G.Time_Format
 
 /* Which teams had a negative goal difference? */
+
 select T.Team_Name, (T.Goals_Scored - T.Goals_Conceded) as Goal_Difference
 from Teams T
 group by Team_Name, T.Goals_Scored, T.Goals_Conceded
